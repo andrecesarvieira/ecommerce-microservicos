@@ -1,0 +1,10 @@
+# Ignore arquivos temporários e de build
+bin/
+obj/
+.vscode/
+.idea/
+*.user
+*.suo
+*.log
+*.db
+.env
