@@ -1,0 +1,53 @@
+version: '3.9'
+
+services:
+  # -------------------------
+  # Banco de dados Estoque
+  # -------------------------
+  db_estoque:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: db_estoque
+    environment:
+      SA_PASSWORD: "YourStrong@Pass1"
+      ACCEPT_EULA: "Y"
+    ports:
+      - "1433:1433"
+    volumes:
+      - estoque_data:/var/opt/mssql
+    networks:
+      - ecommerce-net
+
+  # -------------------------
+  # Banco de dados Vendas
+  # -------------------------
+  db_vendas:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: db_vendas
+    environment:
+      SA_PASSWORD: "YourStrong@Pass2"
+      ACCEPT_EULA: "Y"
+    ports:
+      - "1434:1433"
+    volumes:
+      - vendas_data:/var/opt/mssql
+    networks:
+      - ecommerce-net
+
+  # -------------------------
+  # RabbitMQ
+  # -------------------------
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - ecommerce-net
+
+networks:
+  ecommerce-net:
+
+volumes:
+  estoque_data:
+  vendas_data:
