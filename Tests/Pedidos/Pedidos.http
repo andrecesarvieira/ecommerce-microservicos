@@ -1,0 +1,17 @@
+### Listar todos os pedidos
+GET http://localhost:5002/api/pedidos
+
+### Obter pedido por id
+GET http://localhost:5002/api/pedidos/1
+
+### Incluir pedido
+POST http://localhost:5002/api/pedidos
+Content-Type: application/json
+
+{
+  "produtoId": 1,
+  "quantidade": 2
+}
+
+### Cancelar pedido
+DELETE http://localhost:5002/api/pedidos/1

@@ -10,19 +10,19 @@ namespace Estoque.API.Validations
 
             if (string.IsNullOrEmpty(produtoDto.Nome) || produtoDto.Nome == "string")
             {
-                validacao.Add("Nome não pode ser vazio");
+                validacao.Add("Nome não pode ser vazio.");
             }
             if (string.IsNullOrEmpty(produtoDto.Descricao) || produtoDto.Descricao == "string")
             {
-                validacao.Add("Descrição não pode ser vazia");
+                validacao.Add("Descrição não pode ser vazia.");
             }
-            if (produtoDto.Preco == 0)
+            if (produtoDto.Preco <= 0)
             {
-                validacao.Add("Preço não pode ser zero");
+                validacao.Add("Preço não pode ser zero ou menor que zero.");
             }
-            if (produtoDto.Quantidade == 0)
+            if (produtoDto.Quantidade <= 0)
             {
-                validacao.Add("Quantidade não pode ser zero");
+                validacao.Add("Quantidade não pode ser zero ou menor que zero.");
             }
             return validacao;
         }

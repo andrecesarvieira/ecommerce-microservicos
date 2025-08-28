@@ -36,6 +36,7 @@ namespace Vendas.API.Repositories
         {
             try
             {
+                pedido.Status = StatusPedido.Cancelado;
                 _context.Pedidos.Update(pedido);
                 await _context.SaveChangesAsync();
             }

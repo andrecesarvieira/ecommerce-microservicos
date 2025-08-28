@@ -15,18 +15,22 @@ builder.Services.AddScoped<IPedidoValidator, PedidoValidator>();
 
 // Adiciona o publisher RabbitMQ
 builder.Services.AddScoped<PedidoMessagePublisher>();
+
 // Adiciona suporte a controllers com enums como string
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
         options.JsonSerializerOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter());
     });
+
 // OpenAPI opcional
 builder.Services.AddOpenApi();
-//DbContext
+
+// DbContext
 builder.Services.AddDbContext<VendasContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-//Swagger
+
+// Swagger
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -59,7 +63,6 @@ if (app.Environment.IsDevelopment())
 
 //app.UseHttpsRedirection();
 
-// Mapeia os controllers
 app.MapControllers();
 
 app.Run();

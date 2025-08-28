@@ -58,8 +58,10 @@ namespace Vendas.API.Controllers
         public async Task<IActionResult> CancelarPedido(int id)
         {
             var pedido = await _vendaService.ObterPedidoPorIdAsync(id);
-            if (pedido == null)
-                return NotFound();
+            if (pedido == null) return NotFound();
+
+            var JaCancelado = new PedidoValidation().JaCancelado(pedido);
+            if (JaCancelado != null) return BadRequest(JaCancelado);
 
             await _vendaService.CancelarPedidoAsync(pedido);
 

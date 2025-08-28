@@ -16,15 +16,15 @@ builder.Services.AddScoped<PedidoMessageConsumer>();
 
 // Adiciona suporte a controllers
 builder.Services.AddControllers();
+
 // OpenAPI opcional
 builder.Services.AddOpenApi();
 
-
-//DbContext
+// DbContext
 builder.Services.AddDbContext<EstoqueContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-//Swagger
+// Swagger
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -66,4 +66,3 @@ using (var scope = app.Services.CreateScope())
 }
 
 app.Run();
-
