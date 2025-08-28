@@ -7,7 +7,7 @@ using Vendas.API.Repositories;
 using Vendas.API.Services;
 
 var builder = WebApplication.CreateBuilder(args);
-
+builder.Services.AddScoped<IPedidoMessagePublisher, PedidoMessagePublisher>();
 builder.Services.AddScoped<IPedidoMessagePublisher, PedidoMessagePublisher>();
 builder.Services.AddScoped<IVendaService, VendaService>();
 builder.Services.AddScoped<IPedidoRepository, PedidoRepository>();
@@ -15,9 +15,12 @@ builder.Services.AddScoped<IPedidoValidator, PedidoValidator>();
 
 // Adiciona o publisher RabbitMQ
 builder.Services.AddScoped<PedidoMessagePublisher>();
-
-// Adiciona suporte a controllers
-builder.Services.AddControllers();
+// Adiciona suporte a controllers com enums como string
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter());
+    });
 // OpenAPI opcional
 builder.Services.AddOpenApi();
 //DbContext

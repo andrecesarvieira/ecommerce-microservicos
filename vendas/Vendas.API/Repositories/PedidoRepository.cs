@@ -32,30 +32,16 @@ namespace Vendas.API.Repositories
             }
         }
 
-        public async Task<Pedido?> AtualizarAsync(Pedido pedido)
+        public async Task CancelarAsync(Pedido pedido)
         {
             try
             {
                 _context.Pedidos.Update(pedido);
                 await _context.SaveChangesAsync();
-                return pedido;
             }
             catch (DbUpdateException ex)
             {
-                throw new Exception("Erro ao atualizar o pedido no banco de dados.", ex);
-            }
-        }
-
-        public async Task RemoverAsync(Pedido pedido)
-        {
-            try
-            {
-                _context.Pedidos.Remove(pedido);
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateException ex)
-            {
-                throw new Exception("Erro ao remover o pedido no banco de dados.", ex);
+                throw new Exception("Erro ao cancelar o pedido no banco de dados.", ex);
             }
         }
     }

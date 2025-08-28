@@ -7,7 +7,6 @@ namespace Vendas.API.Interfaces
         Task<IEnumerable<Pedido>> ObterTodosAsync();
         Task<Pedido?> ObterPorIdAsync(int id);
         Task AdicionarAsync(Pedido pedido);
-        Task <Pedido?> AtualizarAsync(Pedido pedido);
-        Task RemoverAsync(Pedido pedido);        
+        Task CancelarAsync(Pedido pedido);        
     }
 }

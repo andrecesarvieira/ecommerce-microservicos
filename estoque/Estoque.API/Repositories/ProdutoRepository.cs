@@ -1,4 +1,5 @@
 using Estoque.API.Data;
+using Estoque.API.Dtos;
 using Estoque.API.Interfaces;
 using Estoque.API.Models;
 using Microsoft.EntityFrameworkCore;
@@ -23,12 +24,19 @@ namespace Estoque.API.Repositories
             return await _context.Produtos.FindAsync(id);
         }
 
-        public async Task IncluirAsync(Produto produto)
+        public async Task<int> IncluirAsync(ProdutoDto produtoDto)
         {
             try
             {
+                var produto = new Produto
+                {
+                    Nome = produtoDto.Nome,
+                    Preco = produtoDto.Preco,
+                    Quantidade = produtoDto.Quantidade
+                };
                 _context.Produtos.Add(produto);
                 await _context.SaveChangesAsync();
+                return produto.Id;
             }
             catch (DbUpdateException ex)
             {

@@ -8,13 +8,17 @@ namespace Vendas.API.Models
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
-
         [Required]
         public int ProdutoId { get; set; }
-
         [Required]
         public int Quantidade { get; set; }
-
-        public DateTime DataCriacao { get; set; } = DateTime.Now;        
+        public StatusPedido Status { get; set; }
+        public DateTime DataCriacao { get; set; } = DateTime.Now;
     }
+
+    public enum StatusPedido
+    {
+        Concluido,
+        Cancelado
+    } 
 }

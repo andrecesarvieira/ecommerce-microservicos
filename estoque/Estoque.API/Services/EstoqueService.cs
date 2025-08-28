@@ -1,3 +1,4 @@
+using Estoque.API.Dtos;
 using Estoque.API.Interfaces;
 using Estoque.API.Models;
 
@@ -17,9 +18,9 @@ namespace Estoque.API.Services
             return await _produtoRepository.ObterPorIdAsync(id);
         }
 
-        public async Task IncluirProdutoAsync(Produto produto)
+        public async Task<int> IncluirProdutoAsync(ProdutoDto produtoDto)
         {
-            await _produtoRepository.IncluirAsync(produto);
+            return await _produtoRepository.IncluirAsync(produtoDto);
         }
 
         public async Task<Produto?> AtualizarProdutoAsync(Produto produto)

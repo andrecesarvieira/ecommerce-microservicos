@@ -22,21 +22,9 @@ namespace Vendas.API.Services
             await _pedidoRepository.AdicionarAsync(pedido);
         }
 
-        public async Task<Pedido?> AtualizarPedidoAsync(Pedido pedido)
+        public async Task CancelarPedidoAsync(Pedido pedido)
         {
-            var existePedido = await ObterPedidoPorIdAsync(pedido.Id);
-            if (existePedido == null) return null;
-
-            return await _pedidoRepository.AtualizarAsync(pedido);
-        }
-
-        public async Task<bool> RemoverPedidoAsync(int id)
-        {
-            var pedido = await _pedidoRepository.ObterPorIdAsync(id);
-            if (pedido == null) return false;
-
-            await _pedidoRepository.RemoverAsync(pedido);
-            return true;
+            await _pedidoRepository.CancelarAsync(pedido);
         }
     }
 }

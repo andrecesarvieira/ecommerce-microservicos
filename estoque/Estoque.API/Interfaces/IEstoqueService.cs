@@ -1,3 +1,4 @@
+using Estoque.API.Dtos;
 using Estoque.API.Models;
 
 namespace Estoque.API.Interfaces
@@ -6,7 +7,7 @@ namespace Estoque.API.Interfaces
     {
         Task<IEnumerable<Produto>> ObterProdutosAsync();
         Task<Produto?> ObterProdutoPorIdAsync(int id);
-        Task IncluirProdutoAsync(Produto produto);
+        Task<int> IncluirProdutoAsync(ProdutoDto dto);
         Task<Produto?> AtualizarProdutoAsync(Produto produto);
         Task<bool> RemoverProdutoAsync(int id);        
     }

@@ -1,6 +1,6 @@
-namespace Vendas.API.Events
+namespace Vendas.API.Dtos
 {
-    public class PedidoEvents
+    public class PedidoDto
     {
         public int ProdutoId { get; set; }
         public int Quantidade { get; set; }

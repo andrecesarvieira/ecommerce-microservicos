@@ -39,6 +39,9 @@ namespace Vendas.API.Migrations
                     b.Property<int>("Quantidade")
                         .HasColumnType("int");
 
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.ToTable("Pedidos");

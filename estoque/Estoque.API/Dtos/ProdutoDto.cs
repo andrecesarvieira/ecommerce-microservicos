@@ -1,6 +1,6 @@
 namespace Estoque.API.Dtos
 {
-    public class AtualizarProdutoDto
+    public class ProdutoDto
     {
         public string Nome { get; set; } = string.Empty;
         public string Descricao { get; set; } = string.Empty;

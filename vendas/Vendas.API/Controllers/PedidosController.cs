@@ -1,6 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using Vendas.API.Models;
 using Vendas.API.Interfaces;
+using Vendas.API.Dtos;
+using Vendas.API.Events;
+using Vendas.API.Validations;
 
 namespace Vendas.API.Controllers
 {
@@ -15,14 +18,14 @@ namespace Vendas.API.Controllers
         private readonly IPedidoMessagePublisher _publisher = publisher;
         private readonly IPedidoValidator _pedidoValidator = pedidoValidator;
 
-        [HttpGet("ObterPedidos")]
+        [HttpGet]
         public async Task<IActionResult> ObterPedidos()
         {
             var pedidos = await _vendaService.ObterPedidosAsync();
             return Ok(pedidos);
         }
 
-        [HttpGet("ObterPedidoPorId/{id}")]
+        [HttpGet("{id}")]
         public async Task<IActionResult> ObterPedidoPorId(int id)
         {
             var pedido = await _vendaService.ObterPedidoPorIdAsync(id);
@@ -30,34 +33,42 @@ namespace Vendas.API.Controllers
             return Ok(pedido);
         }
 
-        [HttpPost("IncluirPedido")]
-        public async Task<IActionResult> IncluirPedido([FromBody] Pedido pedido)
+        [HttpPost]
+        public async Task<IActionResult> IncluirPedido([FromBody] PedidoDto pedidoDto)
         {
-            // Validar o pedido no Estoque.API
-            var erro = await _pedidoValidator.ValidarAsync(pedido);
+            var validacao = new PedidoValidation().ValidaDto(pedidoDto);
+            if (validacao.Count > 0) return BadRequest(validacao);
+
+            // Verifica se tem o produto e quantidade no estoque
+            var erro = await _pedidoValidator.VerificarEstoque(pedidoDto);
             if (erro != null) return BadRequest(erro);
+
+            Pedido pedido = new()
+            {
+                ProdutoId = pedidoDto.ProdutoId,
+                Quantidade = pedidoDto.Quantidade
+            };
 
             await _vendaService.AdicionarPedidoAsync(pedido);
             await _publisher.PublicarPedido(new { pedido.ProdutoId, pedido.Quantidade });
             return CreatedAtAction(nameof(ObterPedidos), new { id = pedido.Id }, pedido);
         }
         
-        [HttpDelete("RemoverPedido/{id}")]
-        public async Task<IActionResult> RemoverProduto(int id)
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> CancelarPedido(int id)
         {
             var pedido = await _vendaService.ObterPedidoPorIdAsync(id);
             if (pedido == null)
                 return NotFound();
 
-            var removido = await _vendaService.RemoverPedidoAsync(id);
-            if (!removido) return NotFound();
+            await _vendaService.CancelarPedidoAsync(pedido);
 
             // Publicar evento de cancelamento
-            var eventoCancelado = new Events.PedidoCanceladoEvent
+            var eventoCancelado = new PedidoCanceladoEvent
             {
                 PedidoId = pedido.Id,
                 ProdutoId = pedido.ProdutoId,
-                Quantidade = pedido.Quantidade
+                Quantidade = pedido.Quantidade,
             };
             await _publisher.PublicarPedidoCanceladoAsync(eventoCancelado);
             return NoContent();
