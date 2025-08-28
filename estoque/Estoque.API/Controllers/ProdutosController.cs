@@ -1,46 +1,58 @@
-using Estoque.API.Data;
+using Estoque.API.Dtos;
+using Estoque.API.Interfaces;
 using Estoque.API.Models;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace Estoque.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class ProdutosController : ControllerBase
+    public class ProdutosController(IEstoqueService estoqueService) : ControllerBase
     {
-        private readonly EstoqueContext _context;
-        public ProdutosController(EstoqueContext context)
-        {
-            _context = context;
-        }
-        // public static readonly List<dynamic> _produtos = new()
-        // {
-        //     new { Id = 1, Nome = "Mouse Gamer", Quantidade = 10, Preco = 150.0 },
-        //     new { Id = 2, Nome = "Teclado Mecânico", Quantidade = 5, Preco = 350.0 },
-        //     new { Id = 3, Nome = "Monitor 27\"", Quantidade = 3, Preco = 1250.0 }
-        // };
+        private readonly IEstoqueService _estoqueService = estoqueService;
 
-        [HttpGet]
+        [HttpGet("ObterProdutos")]
         public async Task<IActionResult> ObterProdutos()
         {
-            var produtos = await _context.Produtos.ToListAsync();
+            var produtos = await _estoqueService.ObterProdutosAsync();
             return Ok(produtos);
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("ObterProdutoPorId/{id}")]
         public async Task<IActionResult> ObterProdutoPorId(int id)
         {
-            var produto = await _context.Produtos.FindAsync(id);
+            var produto = await _estoqueService.ObterProdutoPorIdAsync(id);
             return produto == null ? NotFound() : Ok(produto);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> CriarProduto([FromBody] Produto produto)
+        [HttpPost("IncluirProduto")]
+        public async Task<IActionResult> IncluirProduto([FromBody] Produto produto)
         {
-            _context.Produtos.Add(produto);
-            await _context.SaveChangesAsync();
-            return CreatedAtAction(nameof(ObterProdutos), new { id = produto.Id}, produto);
+            await _estoqueService.IncluirProdutoAsync(produto);
+            return CreatedAtAction(nameof(ObterProdutos), new { id = produto.Id }, produto);
+        }
+
+        [HttpPut("AtualizarProduto")]
+        public async Task<IActionResult> AtualizarProduto(int id, [FromBody] AtualizarProdutoDto dto)
+        {
+            var produto = await _estoqueService.ObterProdutoPorIdAsync(id);
+            if (produto == null)
+                return NotFound();
+
+            produto.Nome = dto.Nome;
+            produto.Descricao = dto.Descricao;
+            produto.Quantidade = dto.Quantidade;
+            produto.Preco = dto.Preco;
+
+            var res = await _estoqueService.AtualizarProdutoAsync(produto);
+            return res == null ? NotFound() : CreatedAtAction(nameof(ObterProdutos), new { id = produto.Id }, produto);
+        }
+        
+        [HttpDelete("RemoverProduto/{id}")]
+        public async Task<IActionResult> RemoverProduto(int id)
+        {
+            var removido = await _estoqueService.RemoverProdutoAsync(id);
+            return removido == true ? NoContent() : NotFound();
         }
     }
 }
