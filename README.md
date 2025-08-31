@@ -105,8 +105,12 @@ Projeto de e-commerce utilizando arquitetura de microserviços, mensageria com R
 - **Configuração local:** Veja exemplo de serviço RabbitMQ no `docker-compose.yml`.
 - **Painel:** [http://localhost:15672](http://localhost:15672) (guest/guest)
 
+
 ## Segurança e Autorização
 
+- **Usuário e senha padrão do admin:**
+  - **Usuário:** admin@ecommerce.com
+  - **Senha:** admin
 - **JWT:** Todos os endpoints sensíveis exigem autenticação JWT.
 - **Roles:** Controle de acesso por roles (`Administrador`, `Estoquista`, `Vendedor`).
 - **Obtenção do token:** Via endpoint `/api/auth/login`.
