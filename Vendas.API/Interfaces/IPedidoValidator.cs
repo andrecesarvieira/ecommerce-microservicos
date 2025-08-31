@@ -1,5 +1,4 @@
 using Vendas.API.Dtos;
-using Vendas.API.Models;
 
 namespace Vendas.API.Interfaces
 {

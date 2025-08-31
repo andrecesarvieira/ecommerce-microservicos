@@ -3,8 +3,6 @@ using Ocelot.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
 //Ocelot
@@ -18,9 +16,6 @@ if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 }
-
-
-//app.UseHttpsRedirection();
 
 // Ativa o Ocelot para roteamento das rotas
 await app.UseOcelot();

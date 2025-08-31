@@ -3,9 +3,11 @@ using Estoque.API.Interfaces;
 using Estoque.API.Validations;
 using Microsoft.AspNetCore.Mvc;
 
+using Microsoft.AspNetCore.Authorization;
 namespace Estoque.API.Controllers
 {
     [ApiController]
+    [Authorize(Roles = "Estoque")]
     [Route("api/[controller]/")]
     public class ProdutosController(IEstoqueService estoqueService) : ControllerBase
     {
@@ -51,7 +53,7 @@ namespace Estoque.API.Controllers
             produto.Preco = produtoDto.Preco;
 
             var res = await _estoqueService.AtualizarProdutoAsync(produto);
-            return res == null ? NotFound() : NoContent();
+            return res == null ? NotFound() : Ok(produto);
         }
         
         [HttpDelete("{id}")]

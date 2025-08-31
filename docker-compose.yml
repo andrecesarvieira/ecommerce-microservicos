@@ -32,6 +32,22 @@ services:
       - ecommerce-net
 
   # -------------------------
+  # Banco de dados Auth
+  # -------------------------
+  db_auth:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: db_auth
+    environment:
+      SA_PASSWORD: "YourStrong@Pass3"
+      ACCEPT_EULA: "Y"
+    ports:
+      - "1435:1433"
+    volumes:
+      - auth_data:/var/opt/mssql
+    networks:
+      - ecommerce-net
+
+  # -------------------------
   # RabbitMQ
   # -------------------------
   rabbitmq:
@@ -49,3 +65,4 @@ networks:
 volumes:
   estoque_data:
   vendas_data:
+  auth_data:

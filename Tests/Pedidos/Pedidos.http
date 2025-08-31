@@ -1,17 +1,33 @@
-### Listar todos os pedidos
-GET http://localhost:5002/api/pedidos
-
-### Obter pedido por id
-GET http://localhost:5002/api/pedidos/1
-
-### Incluir pedido
-POST http://localhost:5002/api/pedidos
+### Login para obter token
+POST http://localhost:5000/api/auth/login
 Content-Type: application/json
 
 {
-  "produtoId": 1,
-  "quantidade": 2
+  "email": "vendas@ecommerce.com",
+  "senha": "vendas"
+}
+
+###
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjMiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiVmVuZGFzIEVjb21tZXJjZSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL2VtYWlsYWRkcmVzcyI6InZlbmRhc0BlY29tbWVyY2UuY29tIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiVmVuZGFzIiwiZXhwIjoxNzU2NjUzODI4fQ.AOtwld8HyDnPlA-B9GwzT7SzyUBfvKxILyvM05jVMF0
+
+### Listar todos os pedidos
+GET http://localhost:5000/api/pedidos
+Authorization: Bearer {{token}}
+
+### Obter pedido por id
+GET http://localhost:5000/api/pedidos/1
+Authorization: Bearer {{token}}
+
+### Incluir pedido
+POST http://localhost:5000/api/pedidos
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "produtoId": 6,
+  "quantidade": 30
 }
 
 ### Cancelar pedido
-DELETE http://localhost:5002/api/pedidos/1
+DELETE http://localhost:5000/api/pedidos/1
+Authorization: Bearer {{token}}

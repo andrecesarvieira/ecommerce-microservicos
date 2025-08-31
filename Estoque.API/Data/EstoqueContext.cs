@@ -3,9 +3,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Estoque.API.Data
 {
-    public class EstoqueContext : DbContext
+    public class EstoqueContext(DbContextOptions<EstoqueContext> options) : DbContext(options)
     {
-        public EstoqueContext(DbContextOptions<EstoqueContext> options) : base(options) { }
         public DbSet<Produto> Produtos { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

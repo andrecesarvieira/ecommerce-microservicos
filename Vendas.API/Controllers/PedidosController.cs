@@ -5,9 +5,11 @@ using Vendas.API.Dtos;
 using Vendas.API.Events;
 using Vendas.API.Validations;
 
+using Microsoft.AspNetCore.Authorization;
 namespace Vendas.API.Controllers
 {
     [ApiController]
+    [Authorize(Roles = "Vendas")]
     [Route("api/[controller]")]
     public class PedidosController(
         IVendaService vendaService,
