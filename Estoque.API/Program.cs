@@ -29,7 +29,7 @@ builder.Services.AddControllers();
 var app = builder.Build();
 
 // Middleware global de tratamento de erros
-app.UseCustomExceptionHandler();
+app.UseCustomExceptionHandler(app.Services.GetRequiredService<Microsoft.Extensions.Logging.ILoggerFactory>());
 
 //Jwt
 app.UseAuthentication();

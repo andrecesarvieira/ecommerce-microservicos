@@ -4,7 +4,7 @@ namespace Vendas.API.Extensions
 {
     public static class ExceptionMiddlewareExtensions
     {
-        public static void UseCustomExceptionHandler(this IApplicationBuilder app)
+        public static void UseCustomExceptionHandler(this IApplicationBuilder app, ILoggerFactory loggerFactory)
         {
             app.UseExceptionHandler(errorApp =>
             {
@@ -16,6 +16,8 @@ namespace Vendas.API.Extensions
                     if (error != null)
                     {
                         var ex = error.Error;
+                        var logger = loggerFactory.CreateLogger("GlobalExceptionHandler");
+                        logger.LogError(ex, "Exceção não tratada capturada pelo middleware global");
                         await context.Response.WriteAsync($"{{\"erro\":\"{ex.Message}\"}}");
                     }
                 });
