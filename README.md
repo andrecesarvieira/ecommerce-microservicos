@@ -38,12 +38,33 @@ Projeto de e-commerce utilizando arquitetura de microserviços, mensageria com R
 - `Tests/` - Arquivos .http para testar endpoints das APIs
 
 
+
+## Pré-requisito: Docker Desktop
+
+Se você ainda não tem o Docker instalado:
+
+1. **Instale o Docker Desktop:**
+  - Baixe em: https://www.docker.com/products/docker-desktop/
+  - Siga as instruções do instalador para seu sistema operacional (Windows, Mac ou Linux).
+  - No Windows, ative o WSL 2 se solicitado (veja: https://docs.docker.com/desktop/wsl/).
+  - Reinicie o computador se necessário.
+2. **Verifique a instalação:**
+  - Abra um terminal e execute:
+    ```sh
+    docker --version
+    ```
+  - O comando deve retornar a versão instalada do Docker.
+
+---
+
 ## Execução Local
 
 1. **Suba bancos e RabbitMQ com Docker Compose:**
   ```sh
   docker-compose up -d
   ```
+  > **Obs.:** O comando acima faz o download automático das imagens necessárias (caso ainda não estejam presentes no seu computador) e já sobe os containers definidos no arquivo `docker-compose.yml`. Não é preciso baixar manualmente as imagens do SQL Server ou RabbitMQ — o Docker faz isso para você na primeira execução.
+
 2. **Crie as migrations e os bancos de dados dentro dos containers Docker:**
   - Gere as migrations do Entity Framework para cada microserviço:
   
