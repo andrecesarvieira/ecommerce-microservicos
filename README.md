@@ -82,20 +82,20 @@ Projeto de e-commerce utilizando arquitetura de microserviços, mensageria com R
 
 - **Auth**
   - `POST /api/auth/login` - Login e obtenção de token JWT
-  - `POST /api/auth` - Registro de usuário (admin)
-  - `GET /api/auth/?pagina=1` - Listar usuários (admin)
-  - `DELETE /api/auth/{email}` - Excluir usuário (admin)
+  - `POST /api/auth` - Registro de usuário (Administrador)
+  - `GET /api/auth/?pagina=1` - Listar usuários (Administrador)
+  - `DELETE /api/auth/{email}` - Excluir usuário (Administrador)
 - **Produtos**
-  - `GET /api/produtos` - Listar produtos (estoque)
-  - `GET /api/produtos/{id}` - Detalhe do produto (estoque e vendas)
-  - `POST /api/produtos` - Incluir produto (estoque)
-  - `PUT /api/produtos/{id}` - Atualizar produto (estoque)
-  - `DELETE /api/produtos/{id}` - Remover produto (estoque)
+  - `GET /api/produtos` - Listar produtos (Estoque)
+  - `GET /api/produtos/{id}` - Detalhe do produto (Estoque e Vendas)
+  - `POST /api/produtos` - Incluir produto (Estoque)
+  - `PUT /api/produtos/{id}` - Atualizar produto (Estoque)
+  - `DELETE /api/produtos/{id}` - Remover produto (Estoque)
 - **Pedidos**
-  - `GET /api/pedidos` - Listar pedidos (vendas)
-  - `GET /api/pedidos/{id}` - Detalhe do pedido (vendas)
-  - `POST /api/pedidos` - Criar pedido (vendas)
-  - `DELETE /api/pedidos/{id}` - Cancelar pedido (vendas)
+  - `GET /api/pedidos` - Listar pedidos (Vendas)
+  - `GET /api/pedidos/{id}` - Detalhe do pedido (Vendas)
+  - `POST /api/pedidos` - Criar pedido (Vendas)
+  - `DELETE /api/pedidos/{id}` - Cancelar pedido (Vendas)
 
 ## Mensageria (RabbitMQ)
 
@@ -112,7 +112,7 @@ Projeto de e-commerce utilizando arquitetura de microserviços, mensageria com R
   - **Usuário:** admin@ecommerce.com
   - **Senha:** admin
 - **JWT:** Todos os endpoints sensíveis exigem autenticação JWT.
-- **Roles:** Controle de acesso por roles (`Administrador`, `Estoquista`, `Vendedor`).
+- **Roles:** Controle de acesso por roles (`Administrador`, `Estoque`, `Vendas`).
 - **Obtenção do token:** Via endpoint `/api/auth/login`.
 
 ## Logs e Monitoramento
@@ -133,9 +133,9 @@ Projeto de e-commerce utilizando arquitetura de microserviços, mensageria com R
 
 ## Documentação
 
-- [Arquitetura](Docs/arquitetura.md)
-- [Requisitos](Docs/requisitos.md)
-- [Mensageria (RabbitMQ)](Docs/mensageria.md)
+- [Arquitetura](docs/arquitetura.md)
+- [Requisitos](docs/requisitos.md)
+- [Mensageria (RabbitMQ)](docs/mensageria.md)
 
 ## Observações
 
