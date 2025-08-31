@@ -44,8 +44,21 @@ Projeto de e-commerce utilizando arquitetura de microserviços, mensageria com R
   ```sh
   docker-compose up -d
   ```
-2. **Crie os bancos de dados dentro dos containers Docker:**
-  - É necessário aplicar as migrations do Entity Framework para cada microserviço:
+2. **Crie as migrations e os bancos de dados dentro dos containers Docker:**
+  - Gere as migrations do Entity Framework para cada microserviço:
+  
+  ```sh
+  # Auth.API
+  dotnet ef migrations add InitialCreate --project Auth.API/Auth.API.csproj --startup-project Auth.API/Auth.API.csproj
+
+  # Estoque.API
+  dotnet ef migrations add InitialCreate --project Estoque.API/Estoque.API.csproj --startup-project Estoque.API/Estoque.API.csproj
+
+  # Vendas.API
+  dotnet ef migrations add InitialCreate --project Vendas.API/Vendas.API.csproj --startup-project Vendas.API/Vendas.API.csproj
+  ```
+  - Em seguida, aplique as migrations para criar os bancos e tabelas:
+
   ```sh
   # Auth.API
   dotnet ef database update --project Auth.API/Auth.API.csproj --startup-project Auth.API/Auth.API.csproj
