@@ -12,7 +12,7 @@ namespace Vendas.API.Messaging
         private readonly string _queuePedidosCriados = "pedidos-criados";
         private readonly string _queuePedidosCancelados = "pedidos-cancelados";
 
-        public async Task PublicarPedido(object mensagem)
+        public async Task PublicarPedido(PedidoEvents mensagem)
         {
             await PublicarMensagemAsync(_queuePedidosCriados, mensagem);
         }

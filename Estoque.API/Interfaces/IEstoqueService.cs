@@ -5,7 +5,7 @@ namespace Estoque.API.Interfaces
 {
     public interface IEstoqueService
     {
-        Task<IEnumerable<Produto>> ObterProdutosAsync();
+        Task<List<Produto>> ObterProdutosAsync(int pagina);
         Task<Produto?> ObterProdutoPorIdAsync(int id);
         Task<int> IncluirProdutoAsync(ProdutoDto dto);
         Task<Produto?> AtualizarProdutoAsync(Produto produto);

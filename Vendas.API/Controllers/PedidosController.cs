@@ -4,8 +4,9 @@ using Vendas.API.Interfaces;
 using Vendas.API.Dtos;
 using Vendas.API.Events;
 using Vendas.API.Validations;
-
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+
 namespace Vendas.API.Controllers
 {
     [ApiController]
@@ -14,54 +15,41 @@ namespace Vendas.API.Controllers
     public class PedidosController(
         IVendaService vendaService,
         IPedidoMessagePublisher publisher,
-        IPedidoValidator pedidoValidator,
-        ILogger<PedidosController> logger) : ControllerBase
+        IPedidoValidator pedidoValidator) : ControllerBase
     {
         private readonly IVendaService _vendaService = vendaService;
         private readonly IPedidoMessagePublisher _publisher = publisher;
         private readonly IPedidoValidator _pedidoValidator = pedidoValidator;
-        private readonly ILogger<PedidosController> _logger = logger;
+        private const string msgPedidoNaoEncontrado = "Pedido(s) não encontrado(s).";
 
+        // Endpoint obter lista de pedidos
         [HttpGet]
-        public async Task<IActionResult> ObterPedidos()
+        public async Task<IActionResult> ObterPedidos([FromQuery, BindRequired] int pagina)
         {
-            _logger.LogInformation("Recebida requisição para listar pedidos");
-            var pedidos = await _vendaService.ObterPedidosAsync();
-            _logger.LogInformation("{Count} pedidos retornados", pedidos?.Count() ?? 0);
-            return Ok(pedidos);
+            var pedidosList = await _vendaService.ObterPedidosAsync(pagina);
+            var pedidos = pedidosList.ToList();
+            return pedidos == null ? NotFound(msgPedidoNaoEncontrado) : Ok(pedidos);
         }
 
+        // Endpoint obter pedido por id
         [HttpGet("{id}")]
         public async Task<IActionResult> ObterPedidoPorId(int id)
         {
-            _logger.LogInformation("Recebida requisição para obter pedido por id: {Id}", id);
             var pedido = await _vendaService.ObterPedidoPorIdAsync(id);
-            if (pedido == null)
-            {
-                _logger.LogWarning("Pedido id {Id} não encontrado", id);
-                return NotFound();
-            }
-            _logger.LogInformation("Pedido id {Id} retornado", id);
-            return Ok(pedido);
+            return pedido == null ? NotFound(msgPedidoNaoEncontrado) : Ok(pedido);
         }
 
+        // Endpoint incluir novo pedido
         [HttpPost]
         public async Task<IActionResult> IncluirPedido([FromBody] PedidoDto pedidoDto)
         {
-            _logger.LogInformation("Recebida requisição para incluir pedido: {@PedidoDto}", pedidoDto);
             var validacao = new PedidoValidation().ValidaDto(pedidoDto);
             if (validacao.Count > 0)
-            {
-                _logger.LogWarning("Validação falhou ao incluir pedido: {Erros}", string.Join(",", validacao));
                 return BadRequest(validacao);
-            }
 
             var erro = await _pedidoValidator.VerificarEstoque(pedidoDto);
             if (erro != null)
-            {
-                _logger.LogWarning("Erro ao verificar estoque: {Erro}", erro);
                 return BadRequest(erro);
-            }
 
             Pedido pedido = new()
             {
@@ -70,28 +58,21 @@ namespace Vendas.API.Controllers
             };
 
             await _vendaService.AdicionarPedidoAsync(pedido);
-            await _publisher.PublicarPedido(new { pedido.ProdutoId, pedido.Quantidade });
-            _logger.LogInformation("Pedido incluído com sucesso: {@Pedido}", pedido);
+            await _publisher.PublicarPedido(new PedidoEvents { ProdutoId = pedido.ProdutoId, Quantidade = pedido.Quantidade });
             return CreatedAtAction(nameof(ObterPedidos), new { id = pedido.Id }, pedido);
         }
-        
+
+        // Endpoint cancelar pedido (exclusão lógica)
         [HttpDelete("{id}")]
         public async Task<IActionResult> CancelarPedido(int id)
         {
-            _logger.LogInformation("Recebida requisição para cancelar pedido id: {Id}", id);
             var pedido = await _vendaService.ObterPedidoPorIdAsync(id);
             if (pedido == null)
-            {
-                _logger.LogWarning("Pedido id {Id} não encontrado para cancelamento", id);
-                return NotFound();
-            }
+                return NotFound(msgPedidoNaoEncontrado);
 
-            var JaCancelado = new PedidoValidation().JaCancelado(pedido);
-            if (JaCancelado != null)
-            {
-                _logger.LogWarning("Pedido id {Id} já cancelado", id);
-                return BadRequest(JaCancelado);
-            }
+            var jaCancelado = new PedidoValidation().JaCancelado(pedido);
+            if (jaCancelado != null)
+                return BadRequest(jaCancelado);
 
             await _vendaService.CancelarPedidoAsync(pedido);
 
@@ -102,7 +83,6 @@ namespace Vendas.API.Controllers
                 Quantidade = pedido.Quantidade,
             };
             await _publisher.PublicarPedidoCanceladoAsync(eventoCancelado);
-            _logger.LogInformation("Pedido id {Id} cancelado com sucesso", id);
             return NoContent();
         }
     }

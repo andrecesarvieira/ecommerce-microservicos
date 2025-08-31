@@ -11,42 +11,49 @@ namespace Auth.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class AuthController(IAuthService authService, IUsuarioRepository usuarioRepository, UsuarioValidation usuarioValidation) : ControllerBase
+    public class AuthController(IAuthService authService,
+                                IUsuarioRepository usuarioRepository,
+                                UsuarioValidation usuarioValidation) : ControllerBase
     {
         private readonly IAuthService _authService = authService;
         private readonly IUsuarioRepository _usuarioRepository = usuarioRepository;
         private readonly UsuarioValidation _usuarioValidation = usuarioValidation;
         
+        // Endpoint login
         [Tags("Login")]
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
         {
             var token = await _authService.LoginAsync(loginDto.Email, loginDto.Senha);
-            if (token == null) return Unauthorized();
-            return Ok(new { token });
+            return token == null ? Unauthorized() : Ok(new { token });
         }
 
+        // Endpoint registrar novo usuário
         [Tags("Admin")]
         [HttpPost]
         [Authorize(Roles = "Administrador")]
         public async Task<IActionResult> Registrar([FromBody] RegistrarDto registrarDto)
         {
             var validacao = await _usuarioValidation.ValidaDto(registrarDto);
-            if (validacao.Count > 0) return BadRequest(validacao);
+            if (validacao.Count > 0)
+                return BadRequest(validacao);
 
             await _authService.RegistrarAsync(registrarDto.Nome, registrarDto.Email, registrarDto.Senha, (int)registrarDto.Perfil);
             return Ok("Usuário registrado com sucesso.");
         }
 
+        // Endpoint obter lista de usuários
         [Tags("Admin")]
         [HttpGet]
         [Authorize(Roles = "Administrador")]
-        public IActionResult ObterUsuarios([FromQuery, BindRequired] int pagina)
+        public async Task<IActionResult> ObterUsuariosAsync([FromQuery, BindRequired] int pagina)
         {
-            List<Usuario> usuarios = _usuarioRepository.ObterUsuarios(pagina);
-            return Ok(usuarios);
+            var usuariosList = await _usuarioRepository.ObterUsuariosAsync(pagina);
+            var usuarios = usuariosList.ToList();
+            return usuarios == null ? NotFound("Nenhum usuário cadastrado.") : Ok(usuarios);
         }
 
+        // Endpoint obter usuário por email
         [Tags("Admin")]
         [HttpGet("{email}")]
         [Authorize(Roles = "Administrador")]
@@ -56,6 +63,7 @@ namespace Auth.API.Controllers
             return usuario == null ? NotFound("Usuário não encontrado.") : Ok(usuario);
         }
         
+        // Endpoint excluir usuário
         [Tags("Admin")]
         [HttpDelete("{email}")]
         [Authorize(Roles = "Administrador")]

@@ -1,3 +1,4 @@
+
 # E-commerce Microserviços
 
 Projeto de e-commerce utilizando arquitetura de microserviços, mensageria com RabbitMQ, API Gateway (Ocelot), autenticação JWT e bancos de dados isolados.
@@ -9,7 +10,23 @@ Projeto de e-commerce utilizando arquitetura de microserviços, mensageria com R
 - **Mensageria:** RabbitMQ para eventos assíncronos entre serviços
 - **Bancos:** SQL Server separados por domínio
 - **Segurança:** JWT para autenticação e autorização
+- **Logs:** Logs estruturados e tratamento global de exceções em todos os serviços
 - **Testes:** Arquivos .http para simular requisições
+
+## Arquitetura
+
+- Comunicação RESTful entre clientes e API Gateway.
+- Comunicação assíncrona entre microserviços via RabbitMQ.
+- Cada microserviço possui seu próprio banco de dados.
+- Toda chamada passa pelo API Gateway.
+
+```
+[Cliente] -> [API Gateway] -> [Auth.API | Estoque.API | Vendas.API]
+                               |                |
+                        [Banco Estoque]   [Banco Vendas]
+                               \\_________/
+                             RabbitMQ
+```
 
 ## Estrutura de Pastas
 
@@ -20,35 +37,82 @@ Projeto de e-commerce utilizando arquitetura de microserviços, mensageria com R
 - `Docs/` - Documentação de arquitetura, requisitos e mensageria
 - `Tests/` - Arquivos .http para testar endpoints das APIs
 
+
 ## Execução Local
 
-1. **Suba os bancos e RabbitMQ com Docker Compose:**
-   ```sh
-   docker-compose up -d
-   ```
-2. **Rode cada microserviço individualmente:**
-   - `dotnet watch run` em cada pasta de API (ou use o script executarAPIs.ps1)
-3. **Acesse o RabbitMQ:** [http://localhost:15672](http://localhost:15672) (guest/guest)
-4. **Testes:** Use os arquivos em `Tests/` para simular login, registro, pedidos, etc.
+1. **Suba bancos e RabbitMQ com Docker Compose:**
+  ```sh
+  docker-compose up -d
+  ```
+2. **Crie os bancos de dados dentro dos containers Docker:**
+  - É necessário aplicar as migrations do Entity Framework para cada microserviço:
+  ```sh
+  # Auth.API
+  dotnet ef database update --project Auth.API/Auth.API.csproj --startup-project Auth.API/Auth.API.csproj
+
+  # Estoque.API
+  dotnet ef database update --project Estoque.API/Estoque.API.csproj --startup-project Estoque.API/Estoque.API.csproj
+
+  # Vendas.API
+  dotnet ef database update --project Vendas.API/Vendas.API.csproj --startup-project Vendas.API/Vendas.API.csproj
+  ```
+  - Isso garante que os bancos (UsuariosDb, EstoqueDb, VendasDb) e as tabelas sejam criados nos containers SQL Server do Docker.
+
+3. **Rode cada microserviço individualmente:**
+  - `dotnet watch run` em cada pasta de API (ou use o script executarAPIs.ps1)
+
+4. **Acesse o RabbitMQ:** [http://localhost:15672](http://localhost:15672) (guest/guest)
+
+5. **Testes:** Use os arquivos em `Tests/` para simular login, registro, pedidos, etc.
 
 ## Principais Endpoints (via Gateway)
 
 - **Auth**
   - `POST /api/auth/login` - Login e obtenção de token JWT
-  - `POST /api/auth` - Registro de usuário (requer token de admin)
+  - `POST /api/auth` - Registro de usuário (admin)
   - `GET /api/auth/?pagina=1` - Listar usuários (admin)
   - `DELETE /api/auth/{email}` - Excluir usuário (admin)
 - **Produtos**
-  - `GET /api/produtos` - Listar produtos (estoquista)
-  - `GET /api/produtos/{id}` - Detalhe do produto
-  - `POST /api/produtos` - Incluir produto
-  - `PUT /api/produtos/{id}` - Atualizar produto
-  - `DELETE /api/produtos/{id}` - Remover produto
+  - `GET /api/produtos` - Listar produtos (estoque)
+  - `GET /api/produtos/{id}` - Detalhe do produto (estoque e vendas)
+  - `POST /api/produtos` - Incluir produto (estoque)
+  - `PUT /api/produtos/{id}` - Atualizar produto (estoque)
+  - `DELETE /api/produtos/{id}` - Remover produto (estoque)
 - **Pedidos**
-  - `GET /api/pedidos` - Listar pedidos (vendedor)
-  - `GET /api/pedidos/{id}` - Detalhe do pedido
-  - `POST /api/pedidos` - Criar pedido
-  - `DELETE /api/pedidos/{id}` - Cancelar pedido
+  - `GET /api/pedidos` - Listar pedidos (vendas)
+  - `GET /api/pedidos/{id}` - Detalhe do pedido (vendas)
+  - `POST /api/pedidos` - Criar pedido (vendas)
+  - `DELETE /api/pedidos/{id}` - Cancelar pedido (vendas)
+
+## Mensageria (RabbitMQ)
+
+- **Filas:**
+  - `pedidos-criados`: Vendas.API publica ao criar pedido, Estoque.API consome e debita estoque.
+  - `pedidos-cancelados`: Vendas.API publica ao cancelar pedido, Estoque.API consome e devolve estoque.
+- **Configuração local:** Veja exemplo de serviço RabbitMQ no `docker-compose.yml`.
+- **Painel:** [http://localhost:15672](http://localhost:15672) (guest/guest)
+
+## Segurança e Autorização
+
+- **JWT:** Todos os endpoints sensíveis exigem autenticação JWT.
+- **Roles:** Controle de acesso por roles (`Administrador`, `Estoquista`, `Vendedor`).
+- **Obtenção do token:** Via endpoint `/api/auth/login`.
+
+## Logs e Monitoramento
+
+- Logs estruturados com `ILogger` em todos os serviços.
+- Middleware global de tratamento de exceções.
+- Apenas exceções reais são logadas (sem poluição de logs de fluxo normal).
+
+## Tecnologias
+
+- .NET Core (C#)
+- Entity Framework Core
+- SQL Server
+- RabbitMQ
+- JWT
+- Ocelot (API Gateway)
+- Docker
 
 ## Documentação
 
@@ -60,4 +124,3 @@ Projeto de e-commerce utilizando arquitetura de microserviços, mensageria com R
 
 - O Gateway (Ocelot) só expõe rotas configuradas no arquivo `Gateway.API/ocelot.json`.
 - Para acessar endpoints protegidos, obtenha um token JWT via login e use nos headers das requisições.
-- O projeto está em desenvolvimento contínuo. Sugestões e melhorias são bem-vindas!

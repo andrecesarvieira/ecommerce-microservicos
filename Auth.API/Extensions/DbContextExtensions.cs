@@ -8,7 +8,11 @@ namespace Auth.API.Extensions
         public static void AddCustomDbContext(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddDbContext<AuthContext>(options =>
-                options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
+                options.UseSqlServer(
+                    configuration.GetConnectionString("DefaultConnection"),
+                    sqlOptions => sqlOptions.EnableRetryOnFailure()
+                )
+            );
         }
     }
 }

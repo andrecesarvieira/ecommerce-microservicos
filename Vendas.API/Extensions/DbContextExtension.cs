@@ -8,7 +8,11 @@ namespace Vendas.API.Extensions
         public static void AddCustomDbContext(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddDbContext<VendasContext>(options =>
-                options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
+                options.UseSqlServer(
+                    configuration.GetConnectionString("DefaultConnection"),
+                    sqlOptions => sqlOptions.EnableRetryOnFailure()
+                )
+            );
         }        
     }
 }

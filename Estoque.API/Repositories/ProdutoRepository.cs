@@ -6,17 +6,20 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Estoque.API.Repositories
 {
-    public class ProdutoRepository : IProdutoRepository
+    public class ProdutoRepository(EstoqueContext context) : IProdutoRepository
     {
-        private readonly EstoqueContext _context;
+        private readonly EstoqueContext _context = context;
 
-        public ProdutoRepository(EstoqueContext context)
+        public async Task<List<Produto>> ObterTodosAsync(int pagina)
         {
-            _context = context;
-        }
-        public async Task<IEnumerable<Produto>> ObterTodosAsync()
-        {
-            return await _context.Produtos.ToListAsync();
+            const int itensPorPagina = 10;
+
+            var query = _context.Produtos;
+
+            return await query
+                .Skip((pagina - 1) * itensPorPagina)
+                .Take(itensPorPagina)
+                .ToListAsync();
         }
 
         public async Task<Produto?> ObterPorIdAsync(int id)

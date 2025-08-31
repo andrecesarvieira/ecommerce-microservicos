@@ -7,9 +7,9 @@ namespace Vendas.API.Services
     {
         private readonly IPedidoRepository _pedidoRepository = pedidoRepository;
 
-        public async Task<IEnumerable<Pedido>> ObterPedidosAsync()
+        public async Task<List<Pedido>> ObterPedidosAsync(int pagina)
         {
-            return await _pedidoRepository.ObterTodosAsync();
+            return await _pedidoRepository.ObterTodosAsync(pagina);
         }
 
         public async Task<Pedido?> ObterPedidoPorIdAsync(int id)

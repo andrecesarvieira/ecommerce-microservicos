@@ -8,9 +8,9 @@ namespace Estoque.API.Services
     {
         private readonly IProdutoRepository _produtoRepository = produtoRepository;
 
-        public async Task<IEnumerable<Produto>> ObterProdutosAsync()
+        public async Task<List<Produto>> ObterProdutosAsync(int pagina)
         {
-            return await _produtoRepository.ObterTodosAsync();
+            return await _produtoRepository.ObterTodosAsync(pagina);
         }
 
         public async Task<Produto?> ObterProdutoPorIdAsync(int id)
@@ -25,16 +25,14 @@ namespace Estoque.API.Services
 
         public async Task<Produto?> AtualizarProdutoAsync(Produto produto)
         {
-            var existeProduto = await ObterProdutoPorIdAsync(produto.Id);
-            if (existeProduto == null) return null;
-
             return await _produtoRepository.AtualizarAsync(produto);
         }
 
         public async Task<bool> RemoverProdutoAsync(int id)
         {
             var produto = await _produtoRepository.ObterPorIdAsync(id);
-            if (produto == null) return false;
+            if (produto == null)
+                return false;
 
             await _produtoRepository.RemoverAsync(produto);
             return true;

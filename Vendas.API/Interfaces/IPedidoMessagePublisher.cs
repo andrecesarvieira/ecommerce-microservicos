@@ -4,7 +4,7 @@ namespace Vendas.API.Interfaces
 {
     public interface IPedidoMessagePublisher
     {
-        Task PublicarPedido(object mensagem);
+        Task PublicarPedido(PedidoEvents mensagem);
         Task PublicarPedidoCanceladoAsync(PedidoCanceladoEvent evento);
     }
 }

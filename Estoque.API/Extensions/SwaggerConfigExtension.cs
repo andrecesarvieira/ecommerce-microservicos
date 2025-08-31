@@ -24,7 +24,6 @@ namespace Estoque.API.Extensions
                         Id = "Bearer"
                     }
                 };
-                
                 options.AddSecurityDefinition("Bearer", securityScheme);
                 options.AddSecurityRequirement(new OpenApiSecurityRequirement
                 {

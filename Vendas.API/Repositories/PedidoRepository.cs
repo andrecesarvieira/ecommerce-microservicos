@@ -11,15 +11,20 @@ namespace Vendas.API.Repositories
     private readonly VendasContext _context = vendasContext;
     private readonly ILogger<PedidoRepository> _logger = logger;
 
-        public async Task<IEnumerable<Pedido>> ObterTodosAsync()
+        public async Task<List<Pedido>> ObterTodosAsync(int pagina)
         {
-            _logger.LogInformation("Buscando todos os pedidos no banco de dados");
-            return await _context.Pedidos.ToListAsync();
+            const int itensPorPagina = 10;
+
+            var query = _context.Pedidos;
+
+            return await query
+                .Skip((pagina - 1) * itensPorPagina)
+                .Take(itensPorPagina)
+                .ToListAsync();
         }
 
         public async Task<Pedido?> ObterPorIdAsync(int id)
         {
-            _logger.LogInformation("Buscando pedido por id: {Id}", id);
             return await _context.Pedidos.FindAsync(id);
         }
 
@@ -27,10 +32,8 @@ namespace Vendas.API.Repositories
         {
             try
             {
-                _logger.LogInformation("Adicionando novo pedido: {@Pedido}", pedido);
                 _context.Pedidos.Add(pedido);
                 await _context.SaveChangesAsync();
-                _logger.LogInformation("Pedido adicionado com sucesso: {@Pedido}", pedido);
             }
             catch (DbUpdateException ex)
             {
@@ -43,11 +46,9 @@ namespace Vendas.API.Repositories
         {
             try
             {
-                _logger.LogInformation("Cancelando pedido: {@Pedido}", pedido);
                 pedido.Status = StatusPedido.Cancelado;
                 _context.Pedidos.Update(pedido);
                 await _context.SaveChangesAsync();
-                _logger.LogInformation("Pedido cancelado com sucesso: {@Pedido}", pedido);
             }
             catch (DbUpdateException ex)
             {

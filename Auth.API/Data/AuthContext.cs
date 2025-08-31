@@ -6,7 +6,6 @@ namespace Auth.API.Data
     public class AuthContext(IConfiguration configuracaoApp, DbContextOptions<AuthContext> options) : DbContext(options)
     {
         private readonly IConfiguration _configuracaoApp = configuracaoApp;
-
         public DbSet<Usuario> Usuarios { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -24,13 +23,14 @@ namespace Auth.API.Data
         }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            if (optionsBuilder.IsConfigured) return;
+            if (optionsBuilder.IsConfigured)
+                return;
 
             var connectionString = _configuracaoApp.GetConnectionString("DefaultConnection")?.ToString();
 
             if (!string.IsNullOrEmpty(connectionString))
             {
-            optionsBuilder.UseSqlServer(connectionString);
+                optionsBuilder.UseSqlServer(connectionString);
             }
         }
     }

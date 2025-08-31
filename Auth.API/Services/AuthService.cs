@@ -41,10 +41,12 @@ namespace Auth.API.Services
         public async Task<string?> LoginAsync(string email, string senha)
         {
             var usuario = await _usuarioRepository.ObterPorEmailAsync(email);
-            if (usuario == null) return null;
+            if (usuario == null)
+                return null;
 
             var result = _passwordHasher.VerifyHashedPassword(usuario, usuario.SenhaHash, senha);
-            if (result == PasswordVerificationResult.Failed) return null;
+            if (result == PasswordVerificationResult.Failed)
+                return null;
 
             return GerarToken(usuario);
         }
@@ -60,7 +62,6 @@ namespace Auth.API.Services
                 Perfil = perfilDescricao
             };
             usuario.SenhaHash = _passwordHasher.HashPassword(usuario, senha);
-
             await _usuarioRepository.AdicionarAsync(usuario);
         }
     }

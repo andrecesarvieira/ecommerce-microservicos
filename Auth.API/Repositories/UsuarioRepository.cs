@@ -44,16 +44,16 @@ namespace Auth.API.Repositories
             return await _context.Usuarios.FirstOrDefaultAsync(u => u.Email == email);
         }
 
-        public List<Usuario> ObterUsuarios(int pagina)
+        public async Task<List<Usuario>> ObterUsuariosAsync(int pagina)
         {
             const int itensPorPagina = 10;
 
             var query = _context.Usuarios;
 
-            return query
+            return await query
                 .Skip((pagina - 1) * itensPorPagina)
                 .Take(itensPorPagina)
-                .ToList();
+                .ToListAsync();
         }
     }
 }

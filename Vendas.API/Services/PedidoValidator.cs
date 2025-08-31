@@ -4,61 +4,49 @@ using Vendas.API.Models;
 
 namespace Vendas.API.Services
 {
+
     public class PedidoValidator(
         IHttpClientFactory httpClientFactory,
         IConfiguration configuration,
-        ILogger<PedidoValidator> logger) : IPedidoValidator
+        ILogger<PedidoValidator> logger,
+        IHttpContextAccessor httpContextAccessor) : IPedidoValidator
     {
-    private readonly HttpClient _httpClient = httpClientFactory.CreateClient();
-    private readonly string? _estoqueApiBaseUrl = configuration["EstoqueApi:BaseUrl"];
-    private readonly ILogger<PedidoValidator> _logger = logger;
+        private readonly HttpClient _httpClient = httpClientFactory.CreateClient();
+        private readonly string? _estoqueApiBaseUrl = configuration["EstoqueApi:BaseUrl"];
+        private readonly ILogger<PedidoValidator> _logger = logger;
+        private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor;
 
         public async Task<string?> VerificarEstoque(PedidoDto pedidoDto)
         {
-            _logger.LogInformation("Verificando estoque para ProdutoId={ProdutoId}, Quantidade={Quantidade}", pedidoDto.ProdutoId, pedidoDto.Quantidade);
             var url = $"{_estoqueApiBaseUrl}{pedidoDto.ProdutoId}";
-            _logger.LogDebug("Requisição GET para Estoque: {Url}", url);
-            HttpResponseMessage response;
             try
             {
-                response = await _httpClient.GetAsync(url);
+                var token = _httpContextAccessor.HttpContext?.Request.Headers.Authorization.FirstOrDefault();
+                var request = new HttpRequestMessage(HttpMethod.Get, url);
+                if (!string.IsNullOrEmpty(token))
+                    request.Headers.Add("Authorization", token);
+                var response = await _httpClient.SendAsync(request);
+
+                if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized || response.StatusCode == System.Net.HttpStatusCode.Forbidden)
+                    return "Não autorizado ao consultar o estoque. Verifique as credenciais do serviço.";
+                if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+                    return "Produto não encontrado no estoque.";
+                if (!response.IsSuccessStatusCode)
+                    return $"Erro ao consultar o estoque: {response.StatusCode}";
+
+                var produto = await response.Content.ReadFromJsonAsync<Produto>();
+                if (produto == null)
+                    return "Erro ao consultar o produto no estoque.";
+                if (produto.Quantidade < pedidoDto.Quantidade)
+                    return "Estoque insuficiente.";
+
+                return null;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Erro ao fazer requisição para o serviço de estoque");
+                _logger.LogError(ex, "Erro ao consultar o serviço de estoque. ProdutoId={ProdutoId}, Quantidade={Quantidade}", pedidoDto.ProdutoId, pedidoDto.Quantidade);
                 return "Erro ao consultar o serviço de estoque.";
             }
-            _logger.LogDebug("Resposta Estoque: StatusCode={StatusCode}", response.StatusCode);
-            if (!response.IsSuccessStatusCode)
-            {
-                _logger.LogWarning("ProdutoId={ProdutoId} não encontrado no estoque.", pedidoDto.ProdutoId);
-                return "Produto não encontrado no estoque.";
-            }
-
-            Produto? produto = null;
-            try
-            {
-                produto = await response.Content.ReadFromJsonAsync<Produto>();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Erro ao desserializar resposta do estoque para ProdutoId={ProdutoId}", pedidoDto.ProdutoId);
-                return "Erro ao consultar o produto no estoque.";
-            }
-            if (produto == null)
-            {
-                _logger.LogError("Resposta do estoque nula para ProdutoId={ProdutoId}", pedidoDto.ProdutoId);
-                return "Erro ao consultar o produto no estoque.";
-            }
-
-            if (produto.Quantidade < pedidoDto.Quantidade)
-            {
-                _logger.LogWarning("Estoque insuficiente para ProdutoId={ProdutoId}. Disponível={Disponivel}, Solicitado={Solicitado}", produto.Id, produto.Quantidade, pedidoDto.Quantidade);
-                return "Estoque insuficiente.";
-            }
-
-            _logger.LogInformation("Estoque validado com sucesso para ProdutoId={ProdutoId}", produto.Id);
-            return null;
         }
     }
 }
