@@ -4,7 +4,7 @@ namespace Vendas.API.Interfaces
 {
     public interface IVendaService
     {
-        Task<List<Pedido>> ObterPedidosAsync(int pagina);
+        Task<IEnumerable<Pedido>> ObterPedidosAsync(int pagina);
         Task<Pedido?> ObterPedidoPorIdAsync(int id);
         Task AdicionarPedidoAsync(Pedido pedido);
         Task CancelarPedidoAsync(Pedido pedido);        

@@ -5,7 +5,7 @@ namespace Estoque.API.Interfaces
 {
     public interface IProdutoRepository
     {
-        Task<List<Produto>> ObterTodosAsync(int pagina);
+        Task<IEnumerable<Produto>> ObterTodosAsync(int pagina);
         Task<Produto?> ObterPorIdAsync(int id);
         Task<int> IncluirAsync(ProdutoDto produtoDto);
         Task <Produto?> AtualizarAsync(Produto produto);

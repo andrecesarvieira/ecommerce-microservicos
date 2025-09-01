@@ -11,7 +11,7 @@ namespace Vendas.API.Repositories
     private readonly VendasContext _context = vendasContext;
     private readonly ILogger<PedidoRepository> _logger = logger;
 
-        public async Task<List<Pedido>> ObterTodosAsync(int pagina)
+        public async Task<IEnumerable<Pedido>> ObterTodosAsync(int pagina)
         {
             const int itensPorPagina = 10;
 

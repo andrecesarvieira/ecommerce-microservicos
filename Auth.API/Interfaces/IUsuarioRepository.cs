@@ -7,7 +7,7 @@ namespace Auth.API.Interfaces
         Task AdicionarAsync(Usuario usuario);
         Task <bool> ExcluirUsuarioAsync(string email);
         Task<Usuario?> ObterPorEmailAsync(string email);
-        Task<List<Usuario>> ObterUsuariosAsync(int pagina);
+        Task<IEnumerable<Usuario>> ObterUsuariosAsync(int pagina);
 
     }
 }

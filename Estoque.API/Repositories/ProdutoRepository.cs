@@ -10,7 +10,7 @@ namespace Estoque.API.Repositories
     {
         private readonly EstoqueContext _context = context;
 
-        public async Task<List<Produto>> ObterTodosAsync(int pagina)
+        public async Task<IEnumerable<Produto>> ObterTodosAsync(int pagina)
         {
             const int itensPorPagina = 10;
 

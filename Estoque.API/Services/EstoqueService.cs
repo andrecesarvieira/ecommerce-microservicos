@@ -8,7 +8,7 @@ namespace Estoque.API.Services
     {
         private readonly IProdutoRepository _produtoRepository = produtoRepository;
 
-        public async Task<List<Produto>> ObterProdutosAsync(int pagina)
+        public async Task<IEnumerable<Produto>> ObterProdutosAsync(int pagina)
         {
             return await _produtoRepository.ObterTodosAsync(pagina);
         }

@@ -44,7 +44,7 @@ namespace Auth.API.Repositories
             return await _context.Usuarios.FirstOrDefaultAsync(u => u.Email == email);
         }
 
-        public async Task<List<Usuario>> ObterUsuariosAsync(int pagina)
+        public async Task<IEnumerable<Usuario>> ObterUsuariosAsync(int pagina)
         {
             const int itensPorPagina = 10;
 
