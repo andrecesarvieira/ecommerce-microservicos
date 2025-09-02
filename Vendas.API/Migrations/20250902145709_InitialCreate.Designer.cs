@@ -12,8 +12,8 @@ using Vendas.API.Data;
 namespace Vendas.API.Migrations
 {
     [DbContext(typeof(VendasContext))]
-    [Migration("20250828185221_CriarTabelaPedidos")]
-    partial class CriarTabelaPedidos
+    [Migration("20250902145709_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

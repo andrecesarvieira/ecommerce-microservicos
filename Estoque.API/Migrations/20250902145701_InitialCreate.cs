@@ -5,7 +5,7 @@
 namespace Estoque.API.Migrations
 {
     /// <inheritdoc />
-    public partial class CriarTabelaProdutos : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Estoque.API.Migrations
 {
     [DbContext(typeof(EstoqueContext))]
-    [Migration("20250828185102_CriarTabelaProdutos")]
-    partial class CriarTabelaProdutos
+    [Migration("20250902145701_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
