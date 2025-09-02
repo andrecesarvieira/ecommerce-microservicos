@@ -94,6 +94,12 @@ Se você ainda não tem o Docker instalado:
 
 3. **Rode cada microserviço individualmente:**
   - `dotnet watch run` em cada pasta de API (ou use o script executarAPIs.ps1)
+    - **Ou, no Linux, execute todos de uma vez com o script Bash:**
+    ```sh
+    chmod +x executarAPIs.sh
+    ./executarAPIs.sh
+    ```
+    Isso abrirá uma nova janela do terminal para cada microserviço (`Gateway.API`, `Auth.API`, `Estoque.API`, `Vendas.API`).
 
 4. **Acesse o RabbitMQ:** [http://localhost:15672](http://localhost:15672) (guest/guest)
 
