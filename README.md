@@ -94,6 +94,7 @@ Se você ainda não tem o Docker instalado:
 
 3. **Rode cada microserviço individualmente:**
   - `dotnet watch run` em cada pasta de API (ou use o script executarAPIs.ps1)
+  
     - **Ou, no Linux, execute todos de uma vez com o script Bash:**
     ```sh
     chmod +x executarAPIs.sh
