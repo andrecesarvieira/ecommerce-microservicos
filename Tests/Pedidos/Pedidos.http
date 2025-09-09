@@ -8,7 +8,7 @@ Content-Type: application/json
 }
 
 ###
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjMiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiVmVuZGFzIEVjb21tZXJjZSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL2VtYWlsYWRkcmVzcyI6InZlbmRhc0BlY29tbWVyY2UuY29tIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiVmVuZGFzIiwiZXhwIjoxNzU2NjYzNzE2fQ.dnlUM4gIN0ImyqKCrf9xWGVPraA7NVXK6fnEMnS8zS8
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjMiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiVmVuZGFzIEVjb21tZXJjZSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL2VtYWlsYWRkcmVzcyI6InZlbmRhc0BlY29tbWVyY2UuY29tIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiVmVuZGFzIiwiZXhwIjoxNzU3NDM1MTI2fQ.NLkR8qBsPYgAK_7YR_62i8LS2dUBRGD79K-9AP3Usho
 
 ### Listar todos os pedidos
 GET http://localhost:5000/api/pedidos?pagina=1
@@ -24,10 +24,10 @@ Content-Type: application/json
 Authorization: Bearer {{token}}
 
 {
-  "produtoId": 5,
-  "quantidade": 1
+  "produtoId": 1,
+  "quantidade": 10
 }
 
 ### Cancelar pedido
-DELETE http://localhost:5000/api/pedidos/5
+DELETE http://localhost:5000/api/pedidos/1
 Authorization: Bearer {{token}}
