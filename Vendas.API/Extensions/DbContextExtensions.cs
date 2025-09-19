@@ -3,7 +3,7 @@ using Vendas.API.Data;
 
 namespace Vendas.API.Extensions
 {
-    public static class DbContextExtension
+    public static class DbContextExtensions
     {
         public static void AddCustomDbContext(this IServiceCollection services, IConfiguration configuration)
         {

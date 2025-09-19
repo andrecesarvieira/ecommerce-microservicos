@@ -2,10 +2,9 @@ using Microsoft.AspNetCore.Mvc;
 using Auth.API.Dtos;
 using Auth.API.Interfaces;
 using Auth.API.Models;
+using Auth.API.Validations;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Authorization;
-using Auth.API.Validations;
-
 
 namespace Auth.API.Controllers
 {
@@ -18,7 +17,7 @@ namespace Auth.API.Controllers
         private readonly IAuthService _authService = authService;
         private readonly IUsuarioRepository _usuarioRepository = usuarioRepository;
         private readonly UsuarioValidation _usuarioValidation = usuarioValidation;
-        
+
         // Endpoint login
         [Tags("Login")]
         [HttpPost("login")]
@@ -62,7 +61,7 @@ namespace Auth.API.Controllers
             var usuario = await _usuarioRepository.ObterPorEmailAsync(email);
             return usuario == null ? NotFound("Usuário não encontrado.") : Ok(usuario);
         }
-        
+
         // Endpoint excluir usuário
         [Tags("Admin")]
         [HttpDelete("{email}")]

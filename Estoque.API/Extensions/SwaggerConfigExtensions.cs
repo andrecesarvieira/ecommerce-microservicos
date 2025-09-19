@@ -2,7 +2,7 @@ using Microsoft.OpenApi.Models;
 
 namespace Estoque.API.Extensions
 {
-    public static class SwaggerConfigExtension
+    public static class SwaggerConfigExtensions
     {
         public static void AddCustomSwagger(this IServiceCollection services)
         {

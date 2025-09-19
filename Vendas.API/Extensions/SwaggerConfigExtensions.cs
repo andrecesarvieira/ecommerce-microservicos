@@ -1,8 +1,8 @@
 using Microsoft.OpenApi.Models;
 
-namespace Auth.API.Extensions
+namespace Vendas.API.Extensions
 {
-    public static class SwaggerConfigExtension
+    public static class SwaggerConfigExtensions
     {
         public static void AddCustomSwagger(this IServiceCollection services)
         {
@@ -24,6 +24,7 @@ namespace Auth.API.Extensions
                         Id = "Bearer"
                     }
                 };
+                
                 options.AddSecurityDefinition("Bearer", securityScheme);
                 options.AddSecurityRequirement(new OpenApiSecurityRequirement
                 {
