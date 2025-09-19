@@ -1,19 +1,18 @@
 using Estoque.API.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace Estoque.API.Data
+namespace Estoque.API.Data;
+
+public class EstoqueContext(DbContextOptions<EstoqueContext> options) : DbContext(options)
 {
-    public class EstoqueContext(DbContextOptions<EstoqueContext> options) : DbContext(options)
+    public DbSet<Produto> Produtos { get; set; }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        public DbSet<Produto> Produtos { get; set; }
+        modelBuilder.Entity<Produto>()
+            .Property(p => p.Preco)
+            .HasPrecision(18, 2);
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            modelBuilder.Entity<Produto>()
-                .Property(p => p.Preco)
-                .HasPrecision(18, 2);
-
-            base.OnModelCreating(modelBuilder);
-        }
+        base.OnModelCreating(modelBuilder);
     }
 }

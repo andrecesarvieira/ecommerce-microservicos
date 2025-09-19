@@ -1,12 +1,11 @@
 using Microsoft.EntityFrameworkCore;
 using Vendas.API.Models;
 
-namespace Vendas.API.Data
-{
-    public class VendasContext : DbContext
-    {
-        public VendasContext(DbContextOptions<VendasContext> options) : base(options) { }
+namespace Vendas.API.Data;
 
-        public DbSet<Pedido> Pedidos { get; set; }        
-    }
+public class VendasContext : DbContext
+{
+    public VendasContext(DbContextOptions<VendasContext> options) : base(options) { }
+
+    public DbSet<Pedido> Pedidos { get; set; }        
 }

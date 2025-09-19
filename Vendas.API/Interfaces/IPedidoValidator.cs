@@ -1,9 +1,8 @@
 using Vendas.API.Dtos;
 
-namespace Vendas.API.Interfaces
+namespace Vendas.API.Interfaces;
+
+public interface IPedidoValidator
 {
-    public interface IPedidoValidator
-    {
-        Task<string?> VerificarEstoque(PedidoDto dto);
-    }
+    Task<string?> VerificarEstoque(PedidoDto dto);
 }

@@ -1,7 +1,6 @@
-namespace Estoque.API.Interfaces
+namespace Estoque.API.Interfaces;
+
+public interface IPedidoMessageConsumer
 {
-    public interface IPedidoMessageConsumer
-    {
-        Task ConsumeMessagesAsync(CancellationToken cancellationToken = default);
-    }
+    Task ConsumeMessagesAsync(CancellationToken cancellationToken = default);
 }

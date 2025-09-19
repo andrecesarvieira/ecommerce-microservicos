@@ -1,10 +1,9 @@
 using Vendas.API.Events;
 
-namespace Vendas.API.Interfaces
+namespace Vendas.API.Interfaces;
+
+public interface IPedidoMessagePublisher
 {
-    public interface IPedidoMessagePublisher
-    {
-        Task PublicarPedido(PedidoEvents mensagem);
-        Task PublicarPedidoCanceladoAsync(PedidoCanceladoEvent evento);
-    }
+    Task PublicarPedido(PedidoEvents mensagem);
+    Task PublicarPedidoCanceladoAsync(PedidoCanceladoEvent evento);
 }

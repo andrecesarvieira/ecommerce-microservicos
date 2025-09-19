@@ -1,18 +1,17 @@
 using Microsoft.EntityFrameworkCore;
 using Vendas.API.Data;
 
-namespace Vendas.API.Extensions
+namespace Vendas.API.Extensions;
+
+public static class DbContextExtensions
 {
-    public static class DbContextExtensions
+    public static void AddCustomDbContext(this IServiceCollection services, IConfiguration configuration)
     {
-        public static void AddCustomDbContext(this IServiceCollection services, IConfiguration configuration)
-        {
-            services.AddDbContext<VendasContext>(options =>
-                options.UseSqlServer(
-                    configuration.GetConnectionString("DefaultConnection"),
-                    sqlOptions => sqlOptions.EnableRetryOnFailure()
-                )
-            );
-        }        
-    }
+        services.AddDbContext<VendasContext>(options =>
+            options.UseSqlServer(
+                configuration.GetConnectionString("DefaultConnection"),
+                sqlOptions => sqlOptions.EnableRetryOnFailure()
+            )
+        );
+    }        
 }

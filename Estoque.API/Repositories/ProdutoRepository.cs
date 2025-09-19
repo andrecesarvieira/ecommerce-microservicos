@@ -4,74 +4,73 @@ using Estoque.API.Interfaces;
 using Estoque.API.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace Estoque.API.Repositories
+namespace Estoque.API.Repositories;
+
+public class ProdutoRepository(EstoqueContext context) : IProdutoRepository
 {
-    public class ProdutoRepository(EstoqueContext context) : IProdutoRepository
+    private readonly EstoqueContext _context = context;
+
+    public async Task<IEnumerable<Produto>> ObterTodosAsync(int pagina)
     {
-        private readonly EstoqueContext _context = context;
+        const int itensPorPagina = 10;
 
-        public async Task<IEnumerable<Produto>> ObterTodosAsync(int pagina)
+        var query = _context.Produtos;
+
+        return await query
+            .Skip((pagina - 1) * itensPorPagina)
+            .Take(itensPorPagina)
+            .ToListAsync();
+    }
+
+    public async Task<Produto?> ObterPorIdAsync(int id)
+    {
+        return await _context.Produtos.FindAsync(id);
+    }
+
+    public async Task<int> IncluirAsync(ProdutoDto produtoDto)
+    {
+        try
         {
-            const int itensPorPagina = 10;
-
-            var query = _context.Produtos;
-
-            return await query
-                .Skip((pagina - 1) * itensPorPagina)
-                .Take(itensPorPagina)
-                .ToListAsync();
+            var produto = new Produto
+            {
+                Nome = produtoDto.Nome,
+                Preco = produtoDto.Preco,
+                Quantidade = produtoDto.Quantidade
+            };
+            _context.Produtos.Add(produto);
+            await _context.SaveChangesAsync();
+            return produto.Id;
         }
-
-        public async Task<Produto?> ObterPorIdAsync(int id)
+        catch (DbUpdateException ex)
         {
-            return await _context.Produtos.FindAsync(id);
+            throw new Exception("Erro ao incluir o produto no banco de dados.", ex);
         }
+    }
 
-        public async Task<int> IncluirAsync(ProdutoDto produtoDto)
+    public async Task<Produto?> AtualizarAsync(Produto produto)
+    {
+        try
         {
-            try
-            {
-                var produto = new Produto
-                {
-                    Nome = produtoDto.Nome,
-                    Preco = produtoDto.Preco,
-                    Quantidade = produtoDto.Quantidade
-                };
-                _context.Produtos.Add(produto);
-                await _context.SaveChangesAsync();
-                return produto.Id;
-            }
-            catch (DbUpdateException ex)
-            {
-                throw new Exception("Erro ao incluir o produto no banco de dados.", ex);
-            }
+            _context.Produtos.Update(produto);
+            await _context.SaveChangesAsync();
+            return produto;
         }
-
-        public async Task<Produto?> AtualizarAsync(Produto produto)
+        catch (DbUpdateException ex)
         {
-            try
-            {
-                _context.Produtos.Update(produto);
-                await _context.SaveChangesAsync();
-                return produto;
-            }
-            catch (DbUpdateException ex)
-            {
-                throw new Exception("Erro ao atualizar o produto no banco de dados.", ex);
-            }
+            throw new Exception("Erro ao atualizar o produto no banco de dados.", ex);
         }
+    }
 
-        public async Task RemoverAsync(Produto produto)
+    public async Task RemoverAsync(Produto produto)
+    {
+        try
         {
-            try
-            {
-                _context.Produtos.Remove(produto);
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateException ex)
-            {
-                throw new Exception("Erro ao excluir o produto no banco de dados.", ex);
-            }
+            _context.Produtos.Remove(produto);
+            await _context.SaveChangesAsync();
+        }
+        catch (DbUpdateException ex)
+        {
+            throw new Exception("Erro ao excluir o produto no banco de dados.", ex);
         }
     }
 }

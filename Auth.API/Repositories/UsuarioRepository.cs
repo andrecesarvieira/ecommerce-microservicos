@@ -3,57 +3,56 @@ using Auth.API.Interfaces;
 using Auth.API.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace Auth.API.Repositories
+namespace Auth.API.Repositories;
+
+public class UsuarioRepository(AuthContext context) : IUsuarioRepository
 {
-    public class UsuarioRepository(AuthContext context) : IUsuarioRepository
+    private readonly AuthContext _context = context;
+
+    public async Task AdicionarAsync(Usuario usuario)
     {
-        private readonly AuthContext _context = context;
-
-        public async Task AdicionarAsync(Usuario usuario)
+        try
         {
-            try
-            {
-                _context.Usuarios.Add(usuario);
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateException ex)
-            {
-                throw new Exception("Erro ao incluir o usuário no banco de dados.", ex);
-            }
+            _context.Usuarios.Add(usuario);
+            await _context.SaveChangesAsync();
         }
-
-        public async Task<bool> ExcluirUsuarioAsync(string email)
+        catch (DbUpdateException ex)
         {
-            var usuario = await _context.Usuarios.FirstOrDefaultAsync(u => u.Email == email);
-            if (usuario == null) return false;
-
-            try
-            {
-                _context.Usuarios.Remove(usuario);
-                await _context.SaveChangesAsync();
-                return true;
-            }
-            catch (DbUpdateException ex)
-            {
-                throw new Exception("Erro ao excluir o usuário no banco de dados.", ex);
-            }
+            throw new Exception("Erro ao incluir o usuário no banco de dados.", ex);
         }
+    }
 
-        public async Task<Usuario?> ObterPorEmailAsync(string email)
+    public async Task<bool> ExcluirUsuarioAsync(string email)
+    {
+        var usuario = await _context.Usuarios.FirstOrDefaultAsync(u => u.Email == email);
+        if (usuario == null) return false;
+
+        try
         {
-            return await _context.Usuarios.FirstOrDefaultAsync(u => u.Email == email);
+            _context.Usuarios.Remove(usuario);
+            await _context.SaveChangesAsync();
+            return true;
         }
-
-        public async Task<IEnumerable<Usuario>> ObterUsuariosAsync(int pagina)
+        catch (DbUpdateException ex)
         {
-            const int itensPorPagina = 10;
-
-            var query = _context.Usuarios;
-
-            return await query
-                .Skip((pagina - 1) * itensPorPagina)
-                .Take(itensPorPagina)
-                .ToListAsync();
+            throw new Exception("Erro ao excluir o usuário no banco de dados.", ex);
         }
+    }
+
+    public async Task<Usuario?> ObterPorEmailAsync(string email)
+    {
+        return await _context.Usuarios.FirstOrDefaultAsync(u => u.Email == email);
+    }
+
+    public async Task<IEnumerable<Usuario>> ObterUsuariosAsync(int pagina)
+    {
+        const int itensPorPagina = 10;
+
+        var query = _context.Usuarios;
+
+        return await query
+            .Skip((pagina - 1) * itensPorPagina)
+            .Take(itensPorPagina)
+            .ToListAsync();
     }
 }
